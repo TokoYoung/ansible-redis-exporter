@@ -1,0 +1,52 @@
+---
+
+- name: create group
+  group:
+    name: redis_exporter
+    state: present
+
+- name: create user
+  user:
+    name: redis_exporter
+    group: redis_exporter
+    createhome: no
+    system: yes
+    state: present
+
+- name : mkdir redis exporter
+  file:
+    path: /opt/redis_exporter
+    state: directory
+    mode: '0755'
+
+- name: download compiled exporter from Google drive 
+  get_url:
+    dest: /opt/redis_exporter
+    url: 'https://drive.google.com/file/d/1EfPfNwNUG1C4EwfL2SXzdOKTSg3geSJK/view?usp=sharing{{ file_id }}'
+
+- name: unzip redis_exporter
+  unarchive:
+    remote_src: yes
+    src: /opt/redis_exporter/redis_exporter.gzip
+    dest: /opt/redis_exporter
+
+- name: delete gzip
+  file:
+    path: /opt/redis_exporter/redis_exporter.gzip
+    state: absent
+
+- name: create symlink to redis exporter
+  file:
+    path: /usr/bin/redis_exporter
+    state: link
+    src: /opt/redis_exporter/redis_exporter
+
+- name: install unit file to systemd when password protected
+  template: 
+    src: redis_exporter.service 
+    dest: /etc/systemd/system/redis_exporter.service  
+
+- name: restart redis_exporter
+  service:
+    name: redis_exporter
+    state: restarted

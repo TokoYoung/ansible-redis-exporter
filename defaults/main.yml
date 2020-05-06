@@ -1,0 +1,7 @@
+---
+
+### put your redis password ###
+redispasswd: ""
+
+### redis exporter file id for google drive ###
+file_id : "1X7LN7KHG1HXknpCQAP9tYFRlEd7saoCg"

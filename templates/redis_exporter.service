@@ -1,0 +1,12 @@
+[Unit]
+Description=Redis Exporter
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+User=redis_exporter
+Group=redis_exporter
+Type=simple
+ExecStart=/opt/redis_exporter/redis_exporter -redis.addr redis://{{ ansible_host }}:6379  -redis.password {{ redispasswd }}
+[Install]
+WantedBy=multi-user.target
